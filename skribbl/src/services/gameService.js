@@ -67,19 +67,19 @@ async function getGameLeaderboard(gameId) {
   }
 
   const leaderboard = {
-    gameId: game._id,
-    entryFees: game.entry_fees,
-    playersInfo: [],
+    game_id: game._id,
+    entry_fees: game.entry_fees,
+    players_info: [],
   };
 
   for (const score of game.scores) {
     const player = score.player_id;
 
-    leaderboard.playersInfo.push({
-      playerId: player.firebase_uid,
+    leaderboard.players_info.push({
+      player_id: player.firebase_uid,
       name: player.name,
-      profileUrl: player.profile_picture_url,
-      gamesPlayed: player.games_played,
+      profile_url: player.profile_picture_url,
+      games_played: player.games_played,
       points: score.points,
       coins: score.coins,
       rank: score.rank,

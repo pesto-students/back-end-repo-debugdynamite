@@ -5,10 +5,10 @@ const getAllUsers = async (req, res) => {
   res.json(users);
 };
 
-async function getUserDetails(req, res) {
+async function getUserDetailsById(req, res) {
   try {
     const userId = req.params.user_id;
-    const userDetails = await userService.getUserDetails(userId);
+    const userDetails = await userService.getUserDetailsById(userId);
     res.status(200).json(userDetails);
   } catch (error) {
     console.error(error);
@@ -16,9 +16,9 @@ async function getUserDetails(req, res) {
   }
 }
 
-const saveUser = (req, res) => {
+const createUser = (req, res) => {
   try {
-    const { user, isNew } = userService.saveUser(req.body);
+    const { user, isNew } = userService.createUser(req.body);
     if (isNew) {
       res.status(201).json(user);
     } else {
@@ -45,7 +45,7 @@ async function getRecentGames(req, res) {
 
 module.exports = {
   getAllUsers,
-  saveUser,
-  getUserDetails,
+  createUser,
+  getUserDetailsById,
   getRecentGames,
 };

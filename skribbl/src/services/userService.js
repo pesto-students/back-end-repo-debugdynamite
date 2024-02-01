@@ -5,7 +5,7 @@ const {
   getPlayerById,
 } = require("../utils");
 
-async function getUserDetails(userId) {
+async function getUserDetailsById(userId) {
   try {
     const user = await User.findById(userId);
     if (!user) {
@@ -38,7 +38,7 @@ const getAllUsers = async () => {
   }
 };
 
-const saveUser = async (user) => {
+const createUser = async (user) => {
   console.log("user in service: ", user);
   try {
     const existingUser = await User.findOne({ firebase_uid: user.uid });
@@ -110,7 +110,7 @@ async function getUserRecentGames(userId, len) {
       date,
       time,
       money,
-      isMoneyGained,
+      is_money_gained: isMoneyGained,
       images,
     };
   });
@@ -118,7 +118,7 @@ async function getUserRecentGames(userId, len) {
 
 module.exports = {
   getAllUsers,
-  saveUser,
-  getUserDetails,
+  createUser,
+  getUserDetailsById,
   getUserRecentGames,
 };
