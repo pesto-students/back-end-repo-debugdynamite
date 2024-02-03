@@ -7,7 +7,6 @@ const socketIO = require("socket.io");
 const userRoutes = require("./src/routes/userRoutes");
 const gameRoutes = require("./src/routes/gameRoutes");
 const authenticateToken = require("./src/middleware/apiAuthMiddleware");
-const authenticateSocket = require("./src/middleware/socketAuthMiddleware");
 
 const firebaseAdmin = require("firebase-admin");
 const serviceAccount = require("./firebase-service-account-key.json");
@@ -36,8 +35,27 @@ const connectedUsers = {};
 app.use("/api/user", authenticateToken, userRoutes);
 app.use("/api/game", authenticateToken, gameRoutes);
 
+const authenticateSocket = async (socket, next) => {
+  const token = socket.handshake.auth.token;
+
+  if (!token) {
+    return next(new Error("Authentication error"));
+  }
+
+  try {
+    const decodedToken = await firebaseAdmin.auth().verifyIdToken(token);
+    socket.user = decodedToken;
+    connectedUsers[decodedToken.user_id] = socket.id; // Store socket.id for each connected user
+    console.log("connected users: ", connectedUsers);
+    io.emit("userJoined", decodedToken.name); // Broadcast user join message
+    next();
+  } catch (error) {
+    return next(new Error("Authentication error"));
+  }
+};
+
 // Middleware to authenticate socket connections using firebase token
-io.use(authenticateSocket(connectedUsers));
+io.use(authenticateSocket);
 
 io.on("connection", (socket) => {
   console.log(`User ${socket.user.name} connected`);
