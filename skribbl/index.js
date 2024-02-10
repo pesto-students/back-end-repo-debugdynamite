@@ -45,7 +45,11 @@ const authenticateSocket = async (socket, next) => {
   try {
     const decodedToken = await firebaseAdmin.auth().verifyIdToken(token);
     socket.user = decodedToken;
-    connectedUsers[decodedToken.user_id] = socket.id; // Store socket.id for each connected user
+    // Store socket.id for each connected user
+    connectedUsers[decodedToken.user_id] = {
+      socketId: socket.id,
+      userName: decodedToken.name,
+    };
     console.log("connected users: ", connectedUsers);
     io.emit("userJoined", decodedToken.name); // Broadcast user join message
     next();
@@ -60,6 +64,13 @@ io.use(authenticateSocket);
 io.on("connection", (socket) => {
   console.log(`User ${socket.user.name} connected`);
 
+  io.emit("connectedUsers", connectedUsers); // Broadcast the list of connected users
+
+  socket.on("selectUser", (user) => {
+    console.log("socket selectUser: ", user);
+    io.emit("userSelected", user);
+  });
+
   // Handle messages from the client
   socket.on("message", (data) => {
     const message = {
@@ -71,11 +82,16 @@ io.on("connection", (socket) => {
     io.emit("message", message);
   });
 
+  socket.on("canvas-data", (data) => {
+    socket.broadcast.emit("canvas-data", data);
+  });
+
   // Handle disconnection
   socket.on("disconnect", () => {
     console.log(`User ${socket.user.name} disconnected`);
     delete connectedUsers[socket.user.user_id];
     io.emit("userLeft", socket.user.name); // Broadcast user leave message
+    io.emit("connectedUsers", connectedUsers); // Broadcast the updated list of connected users
   });
 });
 
