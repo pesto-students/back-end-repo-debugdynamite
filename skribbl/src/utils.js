@@ -1,3 +1,44 @@
+const pictionaryWords = [
+  "Elephant",
+  "Sunflower",
+  "Pizza",
+  "Mountain",
+  "Butterfly",
+  "Guitar",
+  "Sunglasses",
+  "Rainbow",
+  "Book",
+  "Snowman",
+  "Beach",
+  "Robot",
+  "Candle",
+  "Dragon",
+  "Television",
+  "Bicycle",
+  "Castle",
+  "Cactus",
+  "Clock",
+  "Banana",
+  "Fireworks",
+  "Helicopter",
+  "Moon",
+  "Surfboard",
+  "Train",
+  "Penguin",
+  "Camera",
+  "Apple",
+  "Carrot",
+  "Tiger",
+  "Lighthouse",
+  "Frog",
+  "Ice Cream",
+  "Ship",
+  "Rocket",
+  "Star",
+  "Zebra",
+  "Volcano",
+];
+
 function formatDateAndTime(inputDate) {
   // Convert input string to Date object
   const dateObject = new Date(inputDate);
@@ -57,4 +98,43 @@ function getPlayerById(scores, playerId) {
   return null;
 }
 
-module.exports = { formatDateAndTime, getPlayerById, extractProfileUrls };
+function generateRoomCode() {
+  // Generate a random 6-character alphanumeric string
+  return Math.random().toString(36).substring(2, 8).toUpperCase();
+}
+
+// Function to randomly pick 4 words from the list
+function getRandomWords() {
+  const shuffledWords = pictionaryWords.sort(() => 0.5 - Math.random());
+  return shuffledWords.slice(0, 4);
+}
+
+function computeLeaderboard(inputMap) {
+  // Convert the map to an array of objects for easier manipulation
+  const inputArray = Object.entries(inputMap).map(([userId, score]) => ({
+    userId,
+    score,
+  }));
+
+  // Sort the array based on scores in descending order
+  inputArray.sort((a, b) => b.score - a.score);
+
+  // Create the transformed output object
+  const transformedData = inputArray.map((data, index) => ({
+    firebase_uid: data.userId,
+    score: data.score,
+    rank: index + 1,
+    coins: 0,
+  }));
+
+  return transformedData;
+}
+
+module.exports = {
+  formatDateAndTime,
+  getPlayerById,
+  extractProfileUrls,
+  generateRoomCode,
+  getRandomWords,
+  computeLeaderboard,
+};
