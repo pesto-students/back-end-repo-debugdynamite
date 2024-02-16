@@ -14,7 +14,7 @@ const {
 } = require("./src/utils");
 
 const firebaseAdmin = require("firebase-admin");
-const serviceAccount = require("./firebase-service-account-key.json");
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
 const { createGame } = require("./src/services/gameService");
 
 const mongoURI = process.env.MONGO_URI;
@@ -46,7 +46,7 @@ const gameInfo = {};
 const hostUser = {};
 
 app.use("/api/user", authenticateToken, userRoutes);
-app.use("/api/game", gameRoutes);
+app.use("/api/game", authenticateToken, gameRoutes);
 
 const authenticateSocket = async (socket, next) => {
   const token = socket.handshake.auth.token;
