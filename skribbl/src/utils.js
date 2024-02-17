@@ -31,7 +31,6 @@ const pictionaryWords = [
   "Tiger",
   "Lighthouse",
   "Frog",
-  "Ice Cream",
   "Ship",
   "Rocket",
   "Star",

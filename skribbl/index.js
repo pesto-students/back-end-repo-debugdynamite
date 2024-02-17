@@ -112,6 +112,8 @@ io.on("connection", (socket) => {
     clearInterval(timerInterval);
     selectedWords[roomCode] = selectedWord;
 
+    io.to(roomCode).emit("selectedWordLength", selectedWord.length);
+
     timerValue[roomCode] = 0;
 
     timerInterval = setInterval(async () => {
