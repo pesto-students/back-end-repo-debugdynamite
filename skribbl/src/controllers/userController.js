@@ -7,8 +7,8 @@ const getAllUsers = async (req, res) => {
 
 async function getUserDetailsById(req, res) {
   try {
-    const userId = req.params.user_id;
-    const userDetails = await userService.getUserDetailsById(userId);
+    const firebaseUserId = req.params.user_id;
+    const userDetails = await userService.getUserDetailsById(firebaseUserId);
     res.status(200).json(userDetails);
   } catch (error) {
     console.error(error);

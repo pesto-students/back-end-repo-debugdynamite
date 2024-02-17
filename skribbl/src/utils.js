@@ -108,12 +108,18 @@ function getRandomWords() {
   return shuffledWords.slice(0, 4);
 }
 
-function computeLeaderboard(inputMap) {
+function computeLeaderboard(inputMap, totalCoins) {
   // Convert the map to an array of objects for easier manipulation
   const inputArray = Object.entries(inputMap).map(([userId, score]) => ({
     userId,
     score,
   }));
+
+  const totalScore = inputArray.reduce((sum, data) => sum + data.score, 0);
+
+  const calculateCoins = (score, totalCoins) => {
+    return Math.round((score / totalScore) * totalCoins);
+  };
 
   // Sort the array based on scores in descending order
   inputArray.sort((a, b) => b.score - a.score);
@@ -123,7 +129,7 @@ function computeLeaderboard(inputMap) {
     firebase_uid: data.userId,
     score: data.score,
     rank: index + 1,
-    coins: 0,
+    coins: calculateCoins(data.score, totalCoins),
   }));
 
   return transformedData;

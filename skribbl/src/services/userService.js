@@ -5,9 +5,9 @@ const {
   getPlayerById,
 } = require("../utils");
 
-async function getUserDetailsById(userId) {
+async function getUserDetailsById(firebase_uid) {
   try {
-    const user = await User.findById(userId);
+    const user = await User.findOne({ firebase_uid });
     if (!user) {
       throw new Error("User not found");
     }
