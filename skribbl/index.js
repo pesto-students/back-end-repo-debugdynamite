@@ -112,6 +112,8 @@ io.on("connection", (socket) => {
     clearInterval(timerInterval);
     selectedWords[roomCode] = selectedWord;
 
+    io.to(roomCode).emit("selectedWordLength", selectedWord.length);
+
     timerValue[roomCode] = 0;
 
     timerInterval = setInterval(async () => {
@@ -127,13 +129,20 @@ io.on("connection", (socket) => {
             (socket) => (socket.user.selected = false)
           );
 
+          console.log({ scores });
+          console.log({ roomScores: scores[roomCode] });
+
           const game = await createGame(
             roomCode,
             gameInfo[roomCode].entryFees,
             1,
             gameInfo[roomCode].roundDuration,
             new Date().toISOString(),
-            computeLeaderboard(scores[roomCode])
+            computeLeaderboard(
+              scores[roomCode],
+              gameInfo[roomCode].entryFees *
+                Object.keys(scores[roomCode]).length
+            )
           );
           io.to(roomCode).emit("endGame", game._id);
         } else {
